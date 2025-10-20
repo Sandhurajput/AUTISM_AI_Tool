@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import * as faceapi from "face-api.js";
 import Header from "./Header";
+import EmotionChart from "./EmotionChart";
 
 const AutismScreeningForm = () => {
   const [formData, setFormData] = useState({
@@ -17,10 +19,100 @@ const AutismScreeningForm = () => {
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [emotions, setEmotions] = useState(null);
+  const [analyzingEmotion, setAnalyzingEmotion] = useState(false);
+  const [modelsLoaded, setModelsLoaded] = useState(false);
+  const [loadingModels, setLoadingModels] = useState(true);
+  const imageRef = useRef(null);
+  const canvasRef = useRef(null);
   const navigate = useNavigate();
+
+  // Load face-api.js models on component mount
+  useEffect(() => {
+    const loadModels = async () => {
+      try {
+        setLoadingModels(true);
+        const MODEL_URL = "/models";
+        
+        await Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+          faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
+        ]);
+        
+        setModelsLoaded(true);
+        setLoadingModels(false);
+        console.log("✅ Face-api.js models loaded successfully!");
+      } catch (err) {
+        console.error("❌ Error loading models:", err);
+        setLoadingModels(false);
+        setError("Failed to load emotion detection models. Photo upload may not work.");
+      }
+    };
+
+    loadModels();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle image upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setEmotions(null); // Reset previous emotions
+    }
+  };
+
+  // Analyze emotions from uploaded image
+  const analyzeEmotions = async () => {
+    if (!selectedImage || !modelsLoaded) {
+      setError("Please select an image first and wait for models to load.");
+      return;
+    }
+
+    setAnalyzingEmotion(true);
+    setError(null);
+
+    try {
+      const img = imageRef.current;
+      
+      // Detect face and emotions
+      const detections = await faceapi
+        .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
+        .withFaceExpressions();
+
+      if (detections) {
+        setEmotions(detections.expressions);
+        console.log("✅ Emotions detected:", detections.expressions);
+        
+        // Draw detection on canvas
+        if (canvasRef.current) {
+          const canvas = canvasRef.current;
+          const displaySize = { width: img.width, height: img.height };
+          faceapi.matchDimensions(canvas, displaySize);
+          const resizedDetections = faceapi.resizeResults(detections, displaySize);
+          canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+          faceapi.draw.drawDetections(canvas, resizedDetections);
+          faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+        }
+      } else {
+        setError("No face detected in the image. Please upload a clear photo with a visible face.");
+      }
+    } catch (err) {
+      console.error("❌ Error analyzing emotions:", err);
+      setError("Failed to analyze emotions. Please try another image.");
+    } finally {
+      setAnalyzingEmotion(false);
+    }
   };
 
   
@@ -33,6 +125,7 @@ const AutismScreeningForm = () => {
     const dataToSend = {
       ...formData,
       sensoryReactions: [formData.sensoryReactions],
+      emotions: emotions ? emotions : null, // Include emotion data if available
     };
 
    try {
@@ -51,7 +144,7 @@ const AutismScreeningForm = () => {
   
    const aiResult = await response.json();
     
-      navigate("/results", { state: { aiResult, formData } });
+      navigate("/results", { state: { aiResult, formData, emotions } });
 
     } catch (err) {
       setError("Failed to get AI analysis. Please try again.");
@@ -168,6 +261,92 @@ const AutismScreeningForm = () => {
               </select>
             </motion.div>
           ))}
+
+          {/* Photo Upload Section for Emotion Detection */}
+          <motion.div
+            className="mt-8 p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900 dark:to-pink-900 rounded-2xl border-2 border-dashed border-purple-300 dark:border-purple-600"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+          >
+            <div className="text-center mb-4">
+              <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-200 flex items-center justify-center gap-2">
+                <span className="text-2xl">📸</span>
+                Optional: Upload Child's Photo for Emotion Analysis
+              </h3>
+              <p className="text-sm text-purple-600 dark:text-purple-300 mt-1">
+                {loadingModels ? "Loading AI models..." : "Get insights into emotional expressions"}
+              </p>
+            </div>
+
+            {/* File Upload Button */}
+            <div className="flex justify-center mb-4">
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  disabled={!modelsLoaded}
+                />
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-6 py-3 bg-purple-600 dark:bg-purple-700 text-white rounded-xl font-semibold shadow-lg hover:bg-purple-700 dark:hover:bg-purple-800 transition-all flex items-center gap-2 disabled:opacity-50"
+                >
+                  📁 Choose Photo
+                </motion.div>
+              </label>
+            </div>
+
+            {/* Image Preview and Analysis */}
+            {imagePreview && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="space-y-4"
+              >
+                <div className="relative mx-auto max-w-md">
+                  <img
+                    ref={imageRef}
+                    src={imagePreview}
+                    alt="Child"
+                    className="w-full rounded-xl shadow-lg"
+                    crossOrigin="anonymous"
+                  />
+                  <canvas
+                    ref={canvasRef}
+                    className="absolute top-0 left-0 w-full h-full"
+                  />
+                </div>
+
+                {!emotions && (
+                  <button
+                    type="button"
+                    onClick={analyzeEmotions}
+                    disabled={analyzingEmotion || !modelsLoaded}
+                    className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-xl shadow-lg hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {analyzingEmotion ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        Analyzing Emotions...
+                      </>
+                    ) : (
+                      <>🎭 Analyze Emotions</>
+                    )}
+                  </button>
+                )}
+
+                {/* Display Emotion Results */}
+                {emotions && (
+                  <div className="mt-6">
+                    <EmotionChart emotions={emotions} />
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </motion.div>
 
           {/* Animated Button - Loading state ke saath */}
           <motion.button

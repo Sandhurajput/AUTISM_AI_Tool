@@ -7,7 +7,7 @@ import html2canvas from 'html2canvas';
 const ResultsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { aiResult, formData } = location.state || {};
+  const { aiResult, formData, emotions } = location.state || {};
   const pdfRef = useRef();
 
 
@@ -77,7 +77,7 @@ const ResultsPage = () => {
       
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, scaledHeight);
       
-      const fileName = `AutismReport_${formData?.studentName?.replace(/\s+/g, '_') || 'Report'}.pdf`;
+      const fileName = `AutismReport_${formData?.ChildName?.replace(/\s+/g, '_') || 'Report'}.pdf`;
       pdf.save(fileName);
       
       console.log('✅ PDF downloaded successfully:', fileName);
@@ -111,8 +111,8 @@ const ResultsPage = () => {
               Child's Information
             </h2>
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 mt-4" style={{ color: '#374151' }}>
-              <p><strong>Student’s Name:</strong> {formData.studentName}</p>
-              <p><strong>Father’s Name:</strong> {formData.fatherName}</p>
+              <p><strong>Student’s Name:</strong> {formData.ChildName}</p>
+              <p><strong>Father’s Name:</strong> {formData.parentsName||formData.ParentsName}</p>
               <p><strong>Age:</strong> {formData.age} years</p>
               <p><strong>Eye Contact:</strong> {formData.eyeContact}</p>
               <p><strong>Speech Level:</strong> {formData.speechLevel}</p>
@@ -147,6 +147,27 @@ const ResultsPage = () => {
               ))}
             </div>
           </div>
+
+          {/* Emotion Analysis Section in PDF */}
+          {emotions && (
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold pb-2" style={{ color: '#ec4899', borderBottom: '2px solid #fbcfe8' }}>
+                Emotional Expression Analysis
+              </h2>
+              <div className="mt-4 space-y-2">
+                {Object.entries(emotions).map(([emotion, value]) => (
+                  <div key={emotion} className="flex justify-between items-center p-2 rounded" style={{ backgroundColor: '#fef3c7', borderLeft: '4px solid #f59e0b' }}>
+                    <span className="font-semibold capitalize" style={{ color: '#1f2937' }}>{emotion}</span>
+                    <span className="font-bold" style={{ color: '#92400e' }}>{(value * 100).toFixed(1)}%</span>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-sm italic" style={{ color: '#6b7280' }}>
+                Note: Emotion analysis provides additional insights into the Child's emotional expressions during assessment.
+              </p>
+            </div>
+          )}
+          
         </motion.div>
         {/* == PDF CONTENT END == */}
 
