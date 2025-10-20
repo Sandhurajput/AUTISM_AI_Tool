@@ -153,7 +153,11 @@ const AutismScreeningForm = () => {
     };
 
    try {
-      const response = await fetch(import.meta.env.VITE_API_URL, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/analyze';
+      console.log("🔄 Sending request to:", apiUrl);
+      console.log("📦 Data being sent:", dataToSend);
+      
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -162,16 +166,21 @@ const AutismScreeningForm = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorText = await response.text();
+        console.error("❌ Server response:", response.status, errorText);
+        throw new Error(`Server error: ${response.status}`);
       }
 
   
    const aiResult = await response.json();
-    
+    console.log("✅ AI Result received:", aiResult);
+    console.log("📊 Emotions data:", emotions);
+      
       navigate("/results", { state: { aiResult, formData, emotions } });
 
     } catch (err) {
-      setError("Failed to get AI analysis. Please try again.");
+      console.error("❌ Full error:", err);
+      setError(`Failed to get AI analysis: ${err.message}. Please check if server is running.`);
 
       console.error("Fetch error:", err);
     } finally {
