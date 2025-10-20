@@ -8,7 +8,7 @@ import EmotionChart from "./EmotionChart";
 const AutismScreeningForm = () => {
   const [formData, setFormData] = useState({
     ChildName: "",
-    parentsName: "",
+    ParentsName: "",
     age: "",
     eyeContact: "",
     speechLevel: "",
@@ -62,6 +62,23 @@ const AutismScreeningForm = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!validTypes.includes(file.type)) {
+        setError("Please upload a valid image file (JPEG, PNG, or WebP)");
+        e.target.value = null;
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (file.size > maxSize) {
+        setError("Image size should be less than 5MB. Please choose a smaller image.");
+        e.target.value = null;
+        return;
+      }
+
+      setError(null);
       setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {

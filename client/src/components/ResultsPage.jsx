@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import jsPDF from 'jspdf';
@@ -9,7 +9,7 @@ const ResultsPage = () => {
   const navigate = useNavigate();
   const { aiResult, formData, emotions } = location.state || {};
   const pdfRef = useRef();
-
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const therapyGoals = aiResult?.therapy_goals || [];
   const recommendedActivities = aiResult?.activities || [];
@@ -30,9 +30,11 @@ const ResultsPage = () => {
 
   const downloadPDF = async () => {
     try {
+      setIsGeneratingPDF(true);
       const input = pdfRef.current;
       if (!input) {
         alert('Report content not found. Please refresh and try again.');
+        setIsGeneratingPDF(false);
         return;
       }
 
@@ -81,10 +83,12 @@ const ResultsPage = () => {
       pdf.save(fileName);
       
       console.log('✅ PDF downloaded successfully:', fileName);
+      setIsGeneratingPDF(false);
     } catch (error) {
       console.error('❌ Error generating PDF:', error);
       console.error('Error details:', error.message, error.stack);
       alert(`Failed to generate PDF: ${error.message}. Check console for details.`);
+      setIsGeneratingPDF(false);
     }
   };
 
@@ -112,7 +116,7 @@ const ResultsPage = () => {
             </h2>
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 mt-4" style={{ color: '#374151' }}>
               <p><strong>Student’s Name:</strong> {formData.ChildName}</p>
-              <p><strong>Father’s Name:</strong> {formData.parentsName||formData.ParentsName}</p>
+              <p><strong>Father’s Name:</strong> {formData.ParentsName}</p>
               <p><strong>Age:</strong> {formData.age} years</p>
               <p><strong>Eye Contact:</strong> {formData.eyeContact}</p>
               <p><strong>Speech Level:</strong> {formData.speechLevel}</p>
@@ -186,9 +190,17 @@ const ResultsPage = () => {
           </button>
           <button
             onClick={downloadPDF}
-            className="px-8 py-3 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-bold rounded-full shadow-lg hover:scale-105 transition-transform"
+            disabled={isGeneratingPDF}
+            className="px-8 py-3 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-bold rounded-full shadow-lg hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-2"
           >
-            📄 Download Report as PDF
+            {isGeneratingPDF ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                Generating PDF...
+              </>
+            ) : (
+              <>📄 Download Report as PDF</>
+            )}
           </button>
         </motion.div>
       </div>

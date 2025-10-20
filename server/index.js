@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
+import rateLimit from "express-rate-limit";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import db from "./firebaseConfig.js";
 
@@ -14,6 +15,25 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
+// Rate limiting middleware - 10 requests per 15 minutes per IP
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 requests per windowMs
+  message: {
+    error: "Too many requests from this IP, please try again after 15 minutes.",
+    retryAfter: "15 minutes"
+  },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  handler: (req, res) => {
+    console.log(`⚠️ Rate limit exceeded for IP: ${req.ip}`);
+    res.status(429).json({
+      error: "Too many requests",
+      message: "You have exceeded the rate limit. Please try again later.",
+      retryAfter: "15 minutes"
+    });
+  }
+});
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -21,12 +41,12 @@ app.get("/", (req, res) => {
   res.send("Server is running!");
 });
 
-
-app.post("/api/analyze", async (req, res) => {
+// Apply rate limiter to the /api/analyze endpoint
+app.post("/api/analyze", apiLimiter, async (req, res) => {
   try {
     // Sirf kuch fields ke bajaye poora req.body lein
     const formData = req.body;
-    const { studentName, fatherName, age, eyeContact, speechLevel, socialResponse, sensoryReactions } = formData;
+    const { ChildName, ParentsName, age, eyeContact, speechLevel, socialResponse, sensoryReactions } = formData;
 
     console.log("Form data received:", formData);
 
