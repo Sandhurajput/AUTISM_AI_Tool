@@ -1,0 +1,112 @@
+/* Dark Mode Styles - Manual CSS for guaranteed working */
+
+/* When .dark class is on html element */
+html.dark {
+  color-scheme: dark;
+}
+
+/* Background gradients */
+html.dark .bg-gradient-to-b.from-blue-50 {
+  background: linear-gradient(to bottom, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39)) !important;
+}
+
+/* White backgrounds to dark */
+html.dark .bg-white {
+  background-color: rgb(31, 41, 55) !important;
+}
+
+html.dark .bg-white\/90 {
+  background-color: rgba(31, 41, 55, 0.9) !important;
+}
+
+html.dark .bg-gray-50 {
+  background-color: rgb(17, 24, 39) !important;
+}
+
+/* Text colors */
+html.dark .text-gray-800 {
+  color: rgb(255, 255, 255) !important;
+}
+
+html.dark .text-gray-700 {
+  color: rgb(229, 231, 235) !important;
+}
+
+html.dark .text-gray-600 {
+  color: rgb(209, 213, 219) !important;
+}
+
+html.dark .text-gray-500 {
+  color: rgb(156, 163, 175) !important;
+}
+
+/* Borders */
+html.dark .border-gray-100 {
+  border-color: rgb(55, 65, 81) !important;
+}
+
+html.dark .border-gray-200 {
+  border-color: rgb(75, 85, 99) !important;
+}
+
+/* Form inputs */
+html.dark input,
+html.dark select {
+  background-color: rgb(55, 65, 81) !important;
+  border-color: rgb(75, 85, 99) !important;
+  color: rgb(255, 255, 255) !important;
+}
+
+html.dark input::placeholder {
+  color: rgb(156, 163, 175) !important;
+}
+
+/* Buttons */
+html.dark .bg-gray-100 {
+  background-color: rgb(55, 65, 81) !important;
+}
+
+html.dark .bg-gray-200 {
+  background-color: rgb(55, 65, 81) !important;
+}
+
+html.dark .hover\:bg-gray-200:hover {
+  background-color: rgb(75, 85, 99) !important;
+}
+
+html.dark .hover\:bg-gray-300:hover {
+  background-color: rgb(75, 85, 99) !important;
+}
+
+/* Indigo colors */
+html.dark .text-indigo-600 {
+  color: rgb(129, 140, 248) !important;
+}
+
+html.dark .text-indigo-700 {
+  color: rgb(129, 140, 248) !important;
+}
+
+html.dark .text-blue-600 {
+  color: rgb(96, 165, 250) !important;
+}
+
+html.dark .text-emerald-600 {
+  color: rgb(52, 211, 153) !important;
+}
+
+html.dark .text-pink-500 {
+  color: rgb(244, 114, 182) !important;
+}
+
+/* Header */
+html.dark header {
+  background-color: rgb(17, 24, 39) !important;
+  border-color: rgb(55, 65, 81) !important;
+}
+
+/* Footer */
+html.dark footer {
+  background-color: rgb(31, 41, 55) !important;
+  border-color: rgb(55, 65, 81) !important;
+}

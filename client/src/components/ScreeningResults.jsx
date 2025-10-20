@@ -15,39 +15,39 @@ const ScreeningResults = () => {
     return <div className="text-center mt-10">No results found</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-300">
       <Header />
       <main className="flex-1 py-12 px-6 flex flex-col items-center">
-        <div className="max-w-3xl w-full bg-white p-8 rounded-2xl shadow-lg space-y-8 border border-gray-100">
+        <div className="max-w-3xl w-full bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg space-y-8 border border-gray-100 dark:border-gray-700">
 
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-indigo-700">Screening Results & Recommendations</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-3xl font-bold text-indigo-700 dark:text-indigo-400">Screening Results & Recommendations</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">
               Personalized therapy goals and activities for your child's growth
             </p>
           </div>
 
           <section>
-            <h2 className="text-xl font-semibold text-indigo-600 mb-4">Therapy Goals</h2>
+            <h2 className="text-xl font-semibold text-indigo-600 dark:text-indigo-400 mb-4">Therapy Goals</h2>
             <ul className="space-y-3">
               {aiResult?.therapy_goals?.map((goal, i) => (
-                <li key={i} className="flex items-start gap-3 bg-gray-50 p-4 rounded-lg border border-gray-100">
-                  <div className="w-7 h-7 flex items-center justify-center bg-indigo-100 text-indigo-700 font-semibold rounded-full">
+                <li key={i} className="flex items-start gap-3 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-100 dark:border-gray-600">
+                  <div className="w-7 h-7 flex items-center justify-center bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-semibold rounded-full">
                     {i + 1}
                   </div>
-                  <span>{goal}</span>
+                  <span className="dark:text-gray-200">{goal}</span>
                 </li>
               ))}
             </ul>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-indigo-600 mb-4">Recommended Activities</h2>
+            <h2 className="text-xl font-semibold text-indigo-600 dark:text-indigo-400 mb-4">Recommended Activities</h2>
             <div className="grid md:grid-cols-2 gap-4">
               {aiResult?.activities?.map((activity, i) => (
-                <div key={i} className="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                  <h3 className="font-semibold text-gray-800">{activity.title}</h3>
-                  <p className="text-gray-600 mt-1">{activity.description}</p>
+                <div key={i} className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-100 dark:border-gray-600">
+                  <h3 className="font-semibold text-gray-800 dark:text-white">{activity.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 mt-1">{activity.description}</p>
                 </div>
               ))}
             </div>
@@ -56,13 +56,13 @@ const ScreeningResults = () => {
           <div className="flex justify-center gap-4 pt-4">
             <button
               onClick={() => navigate("/")}
-              className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition"
+              className="px-6 py-2 bg-indigo-600 dark:bg-indigo-700 text-white rounded-lg font-semibold hover:bg-indigo-700 dark:hover:bg-indigo-800 transition"
             >
               Check Again
             </button>
             <button 
               onClick={() => navigate("/pdf-report", { state: { aiResult, formData } })}
-              className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition">
+              className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition">
               Download PDF
             </button>
           </div>

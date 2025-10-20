@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import Header from "./Header";
 
 const AutismScreeningForm = () => {
   const [formData, setFormData] = useState({
@@ -62,19 +63,22 @@ const AutismScreeningForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-cyan-50 flex flex-col items-center">
-      {/* Hero Section */}
-      <motion.div
-        className="text-center mt-16 px-4"
-        initial={{ opacity: 0, y: -40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-      >
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex flex-col transition-colors duration-300">
+      <Header />
+      
+      <div className="flex-1 flex flex-col items-center">
+        {/* Hero Section */}
+        <motion.div
+          className="text-center mt-16 px-4"
+          initial={{ opacity: 0, y: -40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+        >
         <h2 className="inline-block px-4 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-teal-400 shadow">
           ⚙️ AI-Powered + Emotion Recognition
         </h2>
 
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mt-6">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mt-6">
           Empowering Early Autism Detection
         </h1>
         <motion.div
@@ -84,20 +88,20 @@ const AutismScreeningForm = () => {
           transition={{ duration: 1, delay: 0.4 }}
         />
 
-        <p className="mt-6 text-gray-600 max-w-2xl mx-auto leading-relaxed text-lg">
+        <p className="mt-6 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed text-lg">
           A calm, intelligent space for screening and personalized therapy
           planning. Get AI-assisted insights tailored to your child’s unique
           needs.
         </p>
 
         <div className="flex justify-center gap-6 mt-6 text-sm">
-          <span className="flex items-center gap-1 text-blue-600 font-medium">
+          <span className="flex items-center gap-1 text-blue-600 dark:text-blue-400 font-medium">
             🧠 AI-Powered Analysis
           </span>
-          <span className="flex items-center gap-1 text-emerald-600 font-medium">
+          <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
             💬 Emotion Detection
           </span>
-          <span className="flex items-center gap-1 text-pink-500 font-medium">
+          <span className="flex items-center gap-1 text-pink-500 dark:text-pink-400 font-medium">
             ❤️ Personalized Care
           </span>
         </div>
@@ -105,15 +109,15 @@ const AutismScreeningForm = () => {
 
       {/* Form Card */}
       <motion.div
-        className="mt-14 w-full max-w-md bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-100"
+        className="mt-14 w-full max-w-md bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-100 dark:border-gray-700 transition-colors duration-300"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
       >
-        <h2 className="text-2xl font-semibold text-gray-800 text-center mb-2">
+        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white text-center mb-2">
           Child Assessment Form
         </h2>
-        <p className="text-gray-500 text-center mb-8">
+        <p className="text-gray-500 dark:text-gray-400 text-center mb-8">
           Please provide information about your child to receive personalized
           AI-powered recommendations and therapy suggestions.
         </p>
@@ -128,14 +132,14 @@ const AutismScreeningForm = () => {
             { label: "Child’s Age", name: "age", type: "number", placeholder: "Enter age in years" },
           ].map((field, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-              <label className="block text-gray-700 mb-2 font-medium">{field.label}</label>
+              <label className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">{field.label}</label>
               <input
                 type={field.type}
                 name={field.name}
                 placeholder={field.placeholder}
                 value={formData[field.name]}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition hover:shadow-sm"
+                className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition hover:shadow-sm"
                 required
               />
             </motion.div>
@@ -149,12 +153,12 @@ const AutismScreeningForm = () => {
             { label: "Sensory Reactions", name: "sensoryReactions", options: ["Normal", "Sensitive", "Extreme"] },
           ].map((dropdown, i) => (
             <motion.div key={i + 10} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 + i * 0.1 }}>
-              <label className="block text-gray-700 mb-2 font-medium">{dropdown.label}</label>
+              <label className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">{dropdown.label}</label>
               <select
                 name={dropdown.name}
                 value={formData[dropdown.name]}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-400 outline-none transition hover:shadow-sm"
+                className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-2 focus:ring-teal-400 outline-none transition hover:shadow-sm"
                 required
               >
                 <option value="">Select {dropdown.label.toLowerCase()}</option>
@@ -179,10 +183,11 @@ const AutismScreeningForm = () => {
       </motion.div>
 
       {/* Footer */}
-      <footer className="mt-12 mb-6 text-center text-gray-500 text-sm">
+      <footer className="mt-12 mb-6 text-center text-gray-500 dark:text-gray-400 text-sm">
         Built with 💙 by{" "}
-        <span className="text-blue-600 font-medium">Sandhya Singh</span> — Avni HealthTech Project
+        <span className="text-blue-600 dark:text-blue-400 font-medium">Sandhya Singh</span> — Avni HealthTech Project
       </footer>
+      </div>
     </div>
   );
 };
