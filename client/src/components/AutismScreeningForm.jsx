@@ -135,6 +135,13 @@ const AutismScreeningForm = () => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Check if user uploaded photo but didn't analyze it
+    if (selectedImage && !emotions) {
+      setError("Please click 'Analyze Emotions' button before submitting the form, or remove the photo.");
+      return;
+    }
+    
     setLoading(true);
     setError(null);
 
@@ -335,6 +342,22 @@ const AutismScreeningForm = () => {
                     ref={canvasRef}
                     className="absolute top-0 left-0 w-full h-full"
                   />
+                  {/* Remove Photo Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setImagePreview(null);
+                      setSelectedImage(null);
+                      setEmotions(null);
+                      setError(null);
+                    }}
+                    className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 transition-all"
+                    title="Remove photo"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
 
                 {!emotions && (
@@ -358,6 +381,11 @@ const AutismScreeningForm = () => {
                 {/* Display Emotion Results */}
                 {emotions && (
                   <div className="mt-6">
+                    <div className="mb-3 p-3 bg-green-100 dark:bg-green-900 rounded-lg border border-green-300 dark:border-green-700">
+                      <p className="text-green-800 dark:text-green-200 text-sm font-medium text-center">
+                        ✅ Emotions analyzed successfully! You can now submit the form.
+                      </p>
+                    </div>
                     <EmotionChart emotions={emotions} />
                   </div>
                 )}
