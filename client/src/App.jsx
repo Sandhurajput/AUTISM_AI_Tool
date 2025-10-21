@@ -3,7 +3,8 @@ import { ThemeProvider } from "./context/ThemeContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import AutismScreeningForm from "./components/AutismScreeningForm";
 import ScreeningResults from "./components/ScreeningResults";
-import ResultsPage from './components/ResultsPage'; 
+import ResultsPage from './components/ResultsPage';
+import FloatingThemeToggle from './components/FloatingThemeToggle';
 import "./App.css";
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider>
         <BrowserRouter>
+          <FloatingThemeToggle />
           <Routes>
             <Route path="/" element={<AutismScreeningForm />} />
             <Route path="/results" element={<ScreeningResults />} />
