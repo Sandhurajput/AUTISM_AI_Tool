@@ -1,9 +1,5 @@
 /* Dark Mode Styles - Manual CSS for guaranteed working */
-
-/* When .dark class is on html element */
-html.dark {
-  color-scheme: dark;
-}
+/* color-scheme is set via JavaScript to prevent conflicts with system settings */
 
 /* Background gradients */
 html.dark .bg-gradient-to-b.from-blue-50 {

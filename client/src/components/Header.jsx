@@ -4,6 +4,13 @@ import { useTheme } from "../context/ThemeContext";
 const Header = () => {
   const { isDarkMode, toggleTheme } = useTheme();
 
+  const handleToggle = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('🔘 Header button clicked! Current mode:', isDarkMode ? 'dark' : 'light');
+    toggleTheme();
+  };
+
   return (
     <header className="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-100 dark:border-gray-700 py-3 px-4 md:py-4 md:px-6 flex items-center justify-between transition-colors duration-300">
       <h1 className="text-sm md:text-lg lg:text-xl font-semibold text-gray-800 dark:text-white max-w-[60%] md:max-w-none">
@@ -11,7 +18,8 @@ const Header = () => {
       </h1>
       <div className="flex items-center gap-2 md:gap-4">
         <button 
-          onClick={toggleTheme}
+          onClick={handleToggle}
+          type="button"
           className="p-2.5 md:p-2 rounded-lg bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 hover:from-indigo-200 hover:to-purple-200 dark:hover:from-gray-700 dark:hover:to-gray-600 transition-all duration-300 shadow-sm"
           aria-label="Toggle theme"
           title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}

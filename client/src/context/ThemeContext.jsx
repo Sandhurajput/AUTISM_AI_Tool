@@ -15,22 +15,30 @@ export const ThemeProvider = ({ children }) => {
     // Check localStorage for saved theme preference
     const savedTheme = localStorage.getItem('theme');
     console.log('Initial theme from localStorage:', savedTheme);
+    // Default to light mode if no preference saved
+    if (savedTheme === null) {
+      return false; // light mode by default
+    }
     return savedTheme === 'dark';
   });
 
   useEffect(() => {
     // Update localStorage and document class when theme changes
     console.log('Theme changed to:', isDarkMode ? 'dark' : 'light');
+    const html = document.documentElement;
+    
     if (isDarkMode) {
-      document.documentElement.classList.add('dark');
+      html.classList.add('dark');
+      html.style.colorScheme = 'dark';
       localStorage.setItem('theme', 'dark');
-      console.log('Dark class added to html element');
+      console.log('✅ Dark mode activated');
     } else {
-      document.documentElement.classList.remove('dark');
+      html.classList.remove('dark');
+      html.style.colorScheme = 'light';
       localStorage.setItem('theme', 'light');
-      console.log('Dark class removed from html element');
+      console.log('✅ Light mode activated');
     }
-    console.log('Current classes on html:', document.documentElement.className);
+    console.log('Current classes on html:', html.className);
   }, [isDarkMode]);
 
   const toggleTheme = () => {

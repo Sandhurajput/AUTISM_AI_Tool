@@ -4,9 +4,17 @@ import { useTheme } from "../context/ThemeContext";
 const FloatingThemeToggle = () => {
   const { isDarkMode, toggleTheme } = useTheme();
 
+  const handleClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('🔘 Floating button clicked! Current mode:', isDarkMode ? 'dark' : 'light');
+    toggleTheme();
+  };
+
   return (
     <button
-      onClick={toggleTheme}
+      onClick={handleClick}
+      type="button"
       className="fixed bottom-6 right-6 md:hidden z-50 p-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-indigo-600 dark:to-purple-700 hover:from-indigo-600 hover:to-purple-700 dark:hover:from-indigo-700 dark:hover:to-purple-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 active:scale-95"
       aria-label="Toggle theme"
       title={isDarkMode ? "Switch to Light Mode ☀️" : "Switch to Dark Mode 🌙"}
